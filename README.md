@@ -7,7 +7,7 @@ Backlash amount possible to change in `backlash_x_distance` and `backlash_y_dist
 
 Implement it like this:
 
-> C:\Users\\`user`\AppData\Local\Programs\Python\Python310\python.exe D:\'script_path'\BacklashCompensation.py
+> C:\Users\\`user`\AppData\Local\Programs\Python\Python310\python.exe D:\\`script_path`\BacklashCompensation.py
 
 If not using `Slic3r` type slicer, you may run it on a sliced gcode:
 
