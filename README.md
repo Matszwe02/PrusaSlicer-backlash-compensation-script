@@ -1,3 +1,47 @@
+# UPDATE 2025-01-09: This repository is now archived due to switching workflow to GcodeTools
+[GcodeTools repo](https://github.com/Matszwe02/GcodeTools)
+
+So here is an example implementation of that script using `GcodeTools`.
+
+It doesn't work well, but it is here to show how it can be easily done.
+
+Maybe sometimes I'll add backlash compensation method into GcodeTools directly, idk, let me know if it will be useful.
+
+```py
+from gcode_tools import Gcode, GcodeTools, Vector, Block
+import sys
+
+backlash_x = 0.1
+backlash_y = 0.1
+backlash_speed = 1200
+
+input_file = sys.argv[1]
+output_file = input_file
+
+gcode = Gcode().from_file(input_file)
+gcode.order()
+dir = Vector()
+last_dir = Vector()
+
+out_gcode: Gcode = gcode.new()
+for i in gcode:
+    dist = i.move.distance().vector_op(Vector.zero(), lambda a, b: a, 0)
+    if dist.X > gcode.config.step: dir.X = backlash_x/2
+    if dist.X < -gcode.config.step: dir.X = -backlash_x/2
+    if dist.Y > gcode.config.step: dir.Y = backlash_y/2
+    if dist.Y < -gcode.config.step: dir.Y = -backlash_y/2
+    
+    if dir != last_dir:
+        i_orig = i.prev.as_origin() or Block()
+        i_orig.move.translate(dir)
+        i_orig.move.speed = backlash_speed
+        out_gcode.g_add(i_orig)
+        last_dir = dir.copy()
+    i.move.translate(dir)
+    out_gcode.g_add(i)
+out_gcode.write_file(output_file)
+```
+
 ## Simple backlash compensation script
 
 
